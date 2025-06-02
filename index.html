@@ -1,0 +1,796 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>OUAI Clone</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      color: #1a1a1a;
+      line-height: 1.6;
+      background: white;
+      scroll-behavior: smooth;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    header.hero {
+      background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://images.unsplash.com/photo-1600185365081-0815300c5b6e?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
+      min-height: 100vh;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      padding-top: 120px;
+    }
+
+    nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      background: rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(10px);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      width: 100%;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+
+    nav.scrolled {
+      background: rgba(0, 0, 0, 0.9);
+      padding: 1rem 2rem;
+      flex-direction: row;
+      justify-content: space-between;
+    }
+
+    nav .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.4rem;
+      font-weight: 500;
+      color: white;
+      letter-spacing: 2px;
+      text-decoration: none;
+      margin-bottom: 1rem;
+    }
+
+    nav.scrolled .logo {
+      margin-bottom: 0;
+    }
+
+    nav ul {
+      list-style: none;
+      display: flex;
+      gap: 2rem;
+      margin: 0;
+      padding: 0;
+    }
+
+    nav a {
+      color: white;
+      text-decoration: none;
+      font-weight: 400;
+      font-size: 0.9rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    nav a:hover {
+      color: #d4af37;
+    }
+
+    .hero-content {
+      text-align: center;
+      margin-bottom: 80px;
+      padding: 0 2rem;
+    }
+
+    .hero-content h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 4.5rem;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 2px;
+      line-height: 1.2;
+    }
+
+    .hero-content p {
+      font-size: 1.4rem;
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      letter-spacing: 1px;
+    }
+
+    .hero-content button {
+      padding: 1rem 2.5rem;
+      background-color: transparent;
+      color: white;
+      border: 1px solid white;
+      font-size: 0.9rem;
+      cursor: pointer;
+      border-radius: 0;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: all 0.3s ease;
+    }
+
+    .hero-content button:hover {
+      background: white;
+      color: #1a1a1a;
+    }
+
+    section.products {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+      text-align: center;
+      margin: 0;
+      border-radius: 0;
+      max-width: 100%;
+      width: 100%;
+      color: white;
+    }
+
+    .products h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #d4af37;
+    }
+
+    .shop-now-title {
+      font-size: 1.2rem;
+      color: #d4af37;
+      margin-bottom: 4rem;
+      text-align: center;
+      font-weight: 300;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+
+    .product-list {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 4rem;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+
+    .product {
+      max-width: 600px;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2rem;
+      border-radius: 0;
+      height: 700px;
+      text-decoration: none;
+      color: inherit;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+      flex: 1;
+    }
+
+    .product:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .product img {
+      width: 100%;
+      height: 500px;
+      object-fit: contain;
+      border-radius: 0;
+      transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+    }
+
+    .product img.hover-img {
+      position: absolute;
+      top: 2rem;
+      left: 2rem;
+      opacity: 0;
+      width: calc(100% - 4rem);
+      height: 500px;
+      object-fit: contain;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .product-info {
+      margin-top: 2rem;
+      position: relative;
+      z-index: 2;
+      background: rgba(26, 26, 26, 0.95);
+      padding: 1.5rem;
+      border-radius: 0;
+      height: auto;
+      backdrop-filter: blur(5px);
+    }
+
+    .product h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      color: #d4af37;
+    }
+
+    .product p {
+      font-weight: 500;
+      color: white;
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+    }
+
+    .product .description {
+      font-size: 1.1rem;
+      color: #ccc;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+      font-weight: 300;
+    }
+
+    .product .shop-now {
+      background: #d4af37;
+      color: #1a1a1a;
+      padding: 1.2rem 2rem;
+      border: none;
+      border-radius: 0;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      width: 100%;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .product .shop-now:hover {
+      background: #c19b2e;
+    }
+
+    .shrink-on-scroll, .grow-on-scroll {
+      transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 0;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    }
+
+    .shrink-on-scroll {
+      transform: scale(1.1);
+      opacity: 1;
+      margin-bottom: 4rem;
+    }
+
+    .grow-on-scroll {
+      transform: scale(0.85);
+      opacity: 0.6;
+      margin-top: 4rem;
+      margin-bottom: 4rem;
+    }
+
+    footer {
+      background: #1a1a1a;
+      color: white;
+      padding: 4rem 2rem;
+      text-align: center;
+      margin-top: auto;
+      width: 100%;
+    }
+
+    .footer-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 3rem;
+      text-align: left;
+    }
+
+    .footer-column h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      margin-bottom: 1.5rem;
+      font-weight: 400;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .footer-column ul {
+      list-style: none;
+    }
+
+    .footer-column ul li {
+      margin-bottom: 0.8rem;
+    }
+
+    .footer-column a {
+      color: #999;
+      text-decoration: none;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+      transition: all 0.3s ease;
+    }
+
+    .footer-column a:hover {
+      color: #d4af37;
+    }
+
+    .footer-bottom {
+      margin-top: 3rem;
+      padding-top: 2rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .footer-bottom p {
+      font-size: 0.9rem;
+      color: #999;
+      letter-spacing: 1px;
+    }
+
+    .social-links {
+      display: flex;
+      gap: 1.5rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+    }
+
+    .social-links a {
+      color: #999;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .social-links a:hover {
+      color: #d4af37;
+    }
+
+    /* Yeni Eklenen Bölümler */
+    .features-section {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #2c2c2c 0%, #1a1a1a 100%);
+      text-align: center;
+      color: white;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .features-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .feature-card {
+      padding: 2rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    .feature-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #d4af37;
+      margin-bottom: 1.5rem;
+    }
+
+    .feature-card h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.4rem;
+      margin-bottom: 1rem;
+      font-weight: 400;
+      color: #d4af37;
+    }
+
+    .feature-card p {
+      color: #ccc;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+
+    .testimonials-section {
+      padding: 6rem 2rem;
+      background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);
+      text-align: center;
+      color: white;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .testimonials-section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3rem;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .testimonial-card {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 2.5rem;
+      border-radius: 0;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(212, 175, 55, 0.1);
+    }
+
+    .testimonial-card:hover {
+      transform: translateY(-10px);
+      border-color: rgba(212, 175, 55, 0.3);
+    }
+
+    .testimonial-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      line-height: 1.8;
+      color: #fff;
+      margin-bottom: 1.5rem;
+      font-style: italic;
+    }
+
+    .testimonial-author {
+      font-weight: 500;
+      color: #d4af37;
+    }
+
+    .testimonial-role {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-top: 0.5rem;
+    }
+
+    @media(max-width: 1024px) {
+      .features-grid,
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media(max-width: 768px) {
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+      }
+      .features-grid,
+      .testimonials-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .product-list {
+        flex-direction: column;
+        align-items: center;
+        gap: 2rem;
+        padding: 0 1rem;
+      }
+
+      .product {
+        max-width: 100%;
+        height: auto;
+        min-height: 600px;
+        padding: 1rem;
+      }
+
+      .product img {
+        height: 400px;
+      }
+
+      .product img.hover-img {
+        height: 400px;
+        top: 1rem;
+        left: 1rem;
+        width: calc(100% - 2rem);
+      }
+
+      .product-info {
+        padding: 1rem;
+      }
+
+      .product h3 {
+        font-size: 1.6rem;
+      }
+
+      .product p {
+        font-size: 1.2rem;
+      }
+
+      .product .description {
+        font-size: 1rem;
+      }
+
+      .product .shop-now {
+        padding: 1rem;
+        font-size: 1rem;
+      }
+
+      .grow-on-scroll {
+        transform: scale(0.85);
+        opacity: 0.6;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+      }
+    }
+
+    .product:hover img:not(.hover-img) {
+      opacity: 0;
+    }
+
+    .product:hover img.hover-img {
+      opacity: 1;
+    }
+
+    .product:hover .product-info {
+      background: rgba(26, 26, 26, 0.98);
+    }
+
+    .shop-header, .blog-header {
+      padding-top: 120px;
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <nav>
+      <a href="index.html" class="logo">Cheveux d'Or</a>
+      <ul>
+        <li><a href="products.html">Shop</a></li>
+        <li><a href="#">About</a></li>
+        <li><a href="blog.html">Blog</a></li>
+      </ul>
+    </nav>
+
+    <div class="hero-content fade-in">
+
+      <a>
+        <img 
+          id="heroShrinkImg"
+          class="shrink-on-scroll"
+          src="https://theouai.com/cdn/shop/files/TYB_Brand_Assets_Site_Asset_HP_Slider_Hero_Desktop_2880x1620_454e64b1-e34e-4427-b8d6-37931615b16e_2200x.jpg?v=1708045909"
+          alt="Shrink Image"
+          style="margin-top: 2rem; max-width: 90%; border-radius: 0; display: block; margin-left: auto; margin-right: auto; cursor: pointer;"
+        />
+      </a>
+
+      <section class="products" id="products">
+        <h2 class="fade-in">Best Sellers</h2>
+        <div class="shop-now-title fade-in">Shop Now</div>
+        <div class="product-list">
+          <a href="products.html" class="product fade-in">
+            <img src="https://dm.henkel-dam.com/is/image/henkel/GL1541_Gliss_Banner_2560x1000px?wid=1280&fmt=webp&qlt=100&fit=hfit%2C1" alt="Shampoo">
+            <img class="hover-img" src="https://dm.henkel-dam.com/is/image/henkel/4015100815078_Gliss_CON_Ultimate_repair_400ml_2953109_TR_front?wid=768&fmt=webp&qlt=90&fit=vfit&align=0%2C0" alt="Shampoo Hover">
+            <div class="product-info">
+              <h3>Repair Shampoo</h3>
+              <p>$28</p>
+              <div class="description">Deeply cleanses while repairing damaged hair. Infused with keratin and natural oils.</div>
+            </div>
+          </a>
+          <a href="products.html" class="product fade-in">
+            <img src="https://dm.henkel-dam.com/is/image/henkel/schwarzkopf-tr_brands_palette-desktop?wid=1280&fmt=webp&qlt=100&fit=hfit,1" alt="Conditioner">
+            <img class="hover-img" src="https://dm.henkel-dam.com/is/image/henkel/4015100813296_GLISS_ON_DOE_75ml_2931200_TR_front?wid=768&fmt=webp&qlt=90&fit=vfit&align=0%2C0" alt="Conditioner Hover">
+            <div class="product-info">
+              <h3>Hydrating Conditioner</h3>
+              <p>$30</p>
+              <div class="description">Nourishes and detangles hair with natural ingredients. Leaves hair soft and manageable.</div>
+            </div>
+          </a>
+          <a href="products.html" class="product fade-in">
+            <img src="https://dm.henkel-dam.com/is/image/henkel/volume_banner_2560X963?wid=768&fmt=webp&qlt=100&fit=hfit%2C1" alt="Hair Oil">
+            <img class="hover-img" src="https://dm.henkel-dam.com/is/image/henkel/TR_PAL_HS_CGP_SPR_GoBlonde_LighteningSpray_teaser_970x1400?wid=768&fmt=webp&qlt=90&fit=vfit&align=0%2C0" alt="Hair Oil Hover">
+            <div class="product-info">
+              <h3>Nourishing Hair Oil</h3>
+              <p>$24</p>
+              <div class="description">Lightweight oil that adds shine and protects hair from heat damage.</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <a href="blog.html">
+        <img 
+          id="heroGrowImg"
+          class="grow-on-scroll"
+          src="https://theouai.com/cdn/shop/files/Brand_Campaign_Site_About_OUAI_LP_Hero_Desktop_2880x1620_5283a674-ff6e-4f15-a3b2-3d5068a5b29d_2200x.jpg?v=1657053934"
+          alt="Grow Image"
+          style="max-width: 90%; border-radius: 0; display: block; margin-left: auto; margin-right: auto; cursor: pointer;"
+        />
+      </a>
+    </div>
+  </header>
+
+  <section class="features-section fade-in">
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon">✨</div>
+        <h3>Premium Quality</h3>
+        <p>Our products are crafted with the finest ingredients to ensure the highest quality for your hair.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">🌿</div>
+        <h3>Natural Ingredients</h3>
+        <p>We use only natural and sustainable ingredients that are gentle on your hair and the environment.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon">💝</div>
+        <h3>Expert Formulation</h3>
+        <p>Each product is carefully formulated by hair care experts to deliver optimal results.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="testimonials-section fade-in">
+    <div class="testimonials-grid">
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">"These products have completely transformed my hair. I've never had such healthy, shiny locks before!"</p>
+        <div class="testimonial-author">Sarah Johnson</div>
+        <div class="testimonial-role">Hair Stylist</div>
+      </div>
+      <div class="testimonial-card fade-in">
+        <p class="testimonial-text">"The quality is outstanding. My clients love the results they get from these products."</p>
+        <div class="testimonial-author">Michael Chen</div>
+        <div class="testimonial-role">Salon Owner</div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="footer-content">
+      <div class="footer-column">
+        <h3>Shop</h3>
+        <ul>
+          <li><a href="#">Shampoo</a></li>
+          <li><a href="#">Conditioner</a></li>
+          <li><a href="#">Hair Oil</a></li>
+          <li><a href="#">All Products</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>About</h3>
+        <ul>
+          <li><a href="#">Our Story</a></li>
+          <li><a href="#">Ingredients</a></li>
+          <li><a href="#">Sustainability</a></li>
+          <li><a href="#">Contact Us</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Help</h3>
+        <ul>
+          <li><a href="#">FAQ</a></li>
+          <li><a href="#">Shipping</a></li>
+          <li><a href="#">Returns</a></li>
+          <li><a href="#">Track Order</a></li>
+        </ul>
+      </div>
+      <div class="footer-column">
+        <h3>Connect</h3>
+        <ul>
+          <li><a href="#">Instagram</a></li>
+          <li><a href="#">Facebook</a></li>
+          <li><a href="#">Twitter</a></li>
+          <li><a href="#">Pinterest</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="social-links">
+        <a href="#">📱</a>
+        <a href="#">💬</a>
+        <a href="#">📸</a>
+        <a href="#">📌</a>
+      </div>
+      <p>&copy; 2025 OUAI Clone. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Fade-in animasyonu
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("visible");
+        }
+      });
+    }, { 
+      threshold: 0.1,
+      rootMargin: '0px 0px -100px 0px'
+    });
+
+    // Tüm fade-in elementlerini gözlemle
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Scroll fonksiyonu
+    function scrollToProducts() {
+      document.getElementById('products').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // Nav scroll efekti
+    window.addEventListener('scroll', () => {
+      const nav = document.querySelector('nav');
+      if (window.scrollY > 50) {
+        nav.classList.add('scrolled');
+      } else {
+        nav.classList.remove('scrolled');
+      }
+    });
+
+    // Shrink efekti
+    const heroShrinkImg = document.getElementById("heroShrinkImg");
+    heroShrinkImg.style.transform = "scale(1.1)";
+    heroShrinkImg.style.opacity = "1";
+
+    // Grow efekti - düzeltilmiş
+    const heroGrowImg = document.getElementById("heroGrowImg");
+    heroGrowImg.style.transform = "scale(0.85)";
+    heroGrowImg.style.opacity = "0.6";
+
+    window.addEventListener("scroll", () => {
+      const scrollTop = window.scrollY;
+      const maxScroll = window.innerHeight * 0.8; // Küçülme için daha kısa mesafe
+
+      // Shrink efekti - daha hızlı küçülme
+      const shrinkScale = Math.max(0.8, 1.1 - (scrollTop / maxScroll) * 0.8);
+      const shrinkOpacity = Math.max(0.4, 1 - (scrollTop / maxScroll) * 1.2);
+      heroShrinkImg.style.transform = `scale(${shrinkScale})`;
+      heroShrinkImg.style.opacity = shrinkOpacity;
+
+      // Grow efekti - ekrana gelince başla
+      const growImgRect = heroGrowImg.getBoundingClientRect();
+      const growStartPoint = window.innerHeight * 0.8; // Ekranın %80'i görününce başla
+      
+      if (growImgRect.top < growStartPoint) {
+        const growProgress = Math.min(1, (growStartPoint - growImgRect.top) / (growStartPoint * 0.5));
+        const growScale = 0.85 + (growProgress * 0.25);
+        const growOpacity = 0.6 + (growProgress * 0.4);
+        heroGrowImg.style.transform = `scale(${growScale})`;
+        heroGrowImg.style.opacity = growOpacity;
+      }
+    });
+  </script>
+</body>
+</html>
